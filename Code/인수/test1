@@ -1,0 +1,105 @@
+#-*- coding: utf-8 -*-
+
+import numpy as np
+import win32com.client
+import text_to_image
+#import input_data
+from PIL import Image
+import sys
+import io
+import os
+import csv
+
+path = 'C:\\Users\\aiia\\.atom\\python\\text_to_image\\train'
+
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
+#encoded_image_path = text_to_image.encode("Hello World!", "image.png")
+#encoded_image_path = text_to_image.encode_file("input_text_file.txt", "output_image.png")
+
+#decoded_text = text_to_image.decode("encoded_image.png")
+#decoded_file_path = text_to_image.decode_to_file("encoded_image.png", "output_text_file.txt")
+
+excel = win32com.client.Dispatch("Excel.Application")
+
+#excel_file = excel.Workbooks.Open('C:\\Users\\aiia\\.atom\\python\\text_to_image\\txt_img_test_file.xlsx')
+excel_file = excel.Workbooks.Open('C:\\Users\\aiia\\.atom\\python\\text_to_image\\test.xlsx')
+w_sheet = excel_file.Activesheet
+
+labels_val = ["0","146","150","166","250","401","413","809","812","813","814","817","819","820","824","826","827","828","831"]
+
+WIDTH, HEIGHT = 28, 28
+
+train, test = 10000, 10000
+
+
+for i in range(3,9999):
+    if(w_sheet.Cells(i,1).Value==None):
+        break
+    if(w_sheet.Cells(i,3).Value==None):
+        w_sheet.Cells(i,3).Value='0 미정'
+    w_sheet.Cells(i,5).Value=np.random.rand()
+    st1 = w_sheet.Cells(i,1).Value
+    st2 = w_sheet.Cells(i,2).Value
+    print(st1)
+    print(st2)
+    #print(st1 + st2)
+
+    de = w_sheet.Cells(i,3).Value
+    for index in range(len(labels_val)):
+        if de.split()[0] == labels_val[index]:
+            w_sheet.Cells(i,4).Value=index
+
+    if w_sheet.Cells(i,5).Value>0.2:
+        encoded_image_path = text_to_image.encode(st1+st2, "C:\\Users\\aiia\\.atom\\python\\text_to_image\\train_2\\%d_%d.png" %(train,i))
+        #encoded_image_path = text_to_image(st1+st2, "image_test%d.png" %i)
+        img = Image.open("C:\\Users\\aiia\\.atom\\python\\text_to_image\\train_2\\%d_%d.png" %(train,i))
+        re_img = img.resize((28,28))
+        re_img.save("C:\\Users\\aiia\\.atom\\python\\text_to_image\\train_2\\%d_%d.png" %(train,i))
+        train = train + 1
+    elif w_sheet.Cells(i,5).Value<=0.2:
+        encoded_image_path = text_to_image.encode(st1+st2, "C:\\Users\\aiia\\.atom\\python\\text_to_image\\test_2\\%d_%d.png" %(test,i))
+        #encoded_image_path = text_to_image(st1+st2, "image_test%d.png" %i)
+        img = Image.open("C:\\Users\\aiia\\.atom\\python\\text_to_image\\test_2\\%d_%d.png" %(test,i))
+        re_img = img.resize((28,28))
+        re_img.save("C:\\Users\\aiia\\.atom\\python\\text_to_image\\test_2\\%d_%d.png" %(test,i))
+        test = test + 1
+
+
+
+excel_file.Save()
+excel.Quit()
+
+count = 0
+stlist = ["test","train"]
+for i in range(2):
+    def createFileList(myDir, format='.png'):
+        fileList = []
+        print(myDir)
+        for root, dirs, files in os.walk(myDir, topdown=False):#os.walk - 하위디렉토리 검색
+            for name in files:
+                if name.endswith(format):
+                    fullName = os.path.join(root, name)
+                    fileList.append(fullName)#경로와 이름 지정(?)
+                    #print("1111")
+        return fileList
+
+    # load the original image
+    myFileList = createFileList('C:\\Users\\aiia\\.atom\\python\\text_to_image\\%s_2' %stlist[i])
+
+    for file in myFileList:
+        print(file)
+        img_file = Image.open(file)
+
+        # get original image parameters...
+        width, height = img_file.size
+        format = img_file.format
+        mode = img_file.mode
+
+        # Save Greyscale values
+        value = np.asarray(img_file.getdata(), dtype=np.int).reshape((img_file.size[1], img_file.size[0]))
+        value = value.flatten()
+        #print(value)
+        with open("%s_img_pixels_2.csv" %stlist[i], 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(value)

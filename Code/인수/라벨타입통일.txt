@@ -1,0 +1,33 @@
+
+import numpy as np
+import win32com.client
+import text_to_image
+from PIL import Image
+import sys
+import io
+import os
+import csv
+
+
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
+
+excel = win32com.client.Dispatch("Excel.Application")
+
+excel_file = excel.Workbooks.Open('C:\\Users\\aiia\\.atom\\python\\text_to_image_2\\test(회사명).xlsx')
+w_sheet = excel_file.Activesheet
+
+WIDTH, HEIGHT = 28, 28
+
+train, test = 100000, 100000
+
+
+for i in range(1,99999):
+    if(w_sheet.Cells(i,1).Value==None):
+        break # 셀값 없으면 끝ㄴ내기
+    de = str(w_sheet.Cells(i,3).Value)# 라벨값 받기
+    if len(de)>4 :
+        w_sheet.Cells(i,3).Value = de.split()[0] # 받은 라벨값 숫자만 뽑아서 다시 저장
+
+excel_file.Save()
+excel.Quit()

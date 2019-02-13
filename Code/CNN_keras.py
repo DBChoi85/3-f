@@ -128,10 +128,4 @@ emnist1_acc = model.evaluate(teX, teY)
 
 e1_acc = emnist1_acc[1]
 
-Predict = model.predict(trX)
-label = np.argmax(Predict, 1)
-label = labels_val[label]
-print(label)
-
-
 print("\nAcc: %.4f" % e1_acc)

@@ -1,0 +1,27 @@
+history = model.fit(Text_data, Text_data_label, validation_data=(Text_data, Text_data_label),
+                    epochs=200, batch_size=128, verbose=1)
+
+model.save('model_emnist_lstm1-1.h5')
+
+score = model.evaluate(Text_test_data, Text_test_data_label)
+
+print("\nTest score:", score[0])
+print('Test accuracy:', score[1])
+
+print(history.history.keys())
+
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['e2', 'e1'], loc='upper left')
+plt.show()
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['e2', 'e1'], loc='upper left')
+plt.show()

@@ -11,7 +11,7 @@ import csv
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-Img_Path = "C:\\Users\\ialab\\PycharmProjects\\insu_CNN\\"
+Img_Path = "C:\\3-f\\NewData\\img_file\\"
 labels_val = []
 
 def dataset(images):
@@ -97,7 +97,7 @@ def index_label(label):
 
 excel = win32com.client.Dispatch("Excel.Application")
 
-excel_file = excel.Workbooks.Open('C:\\Users\\ialab\\PycharmProjects\\insu_CNN\\editer_all.xlsx')
+excel_file = excel.Workbooks.Open('C:\\3-f\\editer_all.xlsx')
 w_sheet = excel_file.Activesheet
 
 
@@ -116,7 +116,7 @@ labels_val = [1, 146, 150, 166, 172, 192, 194, 196, 198, 202, 209, 211, 246, 267
 labels_val.sort()
 print(labels_val)
 labels_count = len(labels_val)
-print('labels_val : ',labels_val)
+print('labels_val : ', labels_val)
 count_epoch = 1
 #la = 828
 for la in test_labels:
@@ -167,7 +167,7 @@ for la in test_labels:
         else:
             num = str(i)
 
-        model = load_model('./model3/model_num-%s.h5' % num)
+        model = load_model('C:\\3-f\\NewData\\model3\\model_num-%s.h5' % num)
 
         emnist1_acc = model.evaluate(teX, teY)
         e1_acc = emnist1_acc[1]

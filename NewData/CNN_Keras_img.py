@@ -10,7 +10,7 @@ import csv
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-Img_Path = "C:\\Users\\ialab\\PycharmProjects\\insu_CNN\\"
+Img_Path = "C:\\3-f\\ewData\\img_file\\"
 labels_val = []
 
 def dataset(images):
@@ -86,7 +86,7 @@ def index_label(label):
                 break
     return np.asarray(list)
 
-trX, trY, result = data_set_fun(Img_Path + 'train_img', 0)
+trX, trY, result = data_set_fun(Img_Path + 'train_img_new', 0)
 #print('train_분포 : ', result)
 teX, teY, result = data_set_fun(Img_Path + 'test_img', 0)
 #print('test_분포 : ', result)

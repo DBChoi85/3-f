@@ -11,7 +11,7 @@ import csv
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-Img_Path = "C:\\Users\\ialab\\PycharmProjects\\insu_CNN\\"
+Img_Path = "C:\\3-f\\NewData\\146_827\\"
 labels_val = []
 
 def dataset(images):
@@ -90,7 +90,7 @@ def index_label(label):
                 break
     return np.asarray(list)
 
-trX, trY, result = data_set_fun(Img_Path + 'train_img_new', 0, 0)
+trX, trY, result = data_set_fun(Img_Path + 'train_total_img_new', 0, 0)
 #print('train_분포 : ', result)
 teX, teY, result = data_set_fun(Img_Path + 'test_img_new', 0, 0)
 #print('test_분포 : ', result)
@@ -107,40 +107,40 @@ teY = index_label(teY)
 trY = dence_to_one_hot(trY, labels_count)
 teY = dence_to_one_hot(teY, labels_count)
 
-EPOCH = 400
+EPOCH = 200
 BATCH_SIZE = 200
 VERBOSE = 2
 
 model = Sequential()
-model.add(Conv2D(20, kernel_size=5, input_shape=(28, 28, 1), padding="same", kernel_initializer = 'he_uniform'))
+model.add(Conv2D(20, kernel_size=5, input_shape=(28, 28, 1), padding="same", kernel_initializer= 'he_uniform'))
 #model.add(BatchNormalization(axis=1))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-model.add(Conv2D(50, kernel_size=5, padding="same", kernel_initializer = 'he_uniform'))
+model.add(Conv2D(50, kernel_size=5, padding="same", kernel_initializer= 'he_uniform'))
 #model.add(BatchNormalization(axis=1))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-model.add(Dropout(0.5))
+model.add(Dropout(0.3))
 model.add(Flatten())
-model.add(Dense(500, activation='relu', kernel_initializer = 'he_uniform'))
+model.add(Dense(500, activation='relu', kernel_initializer='he_uniform'))
 model.add(Dropout(0.5))
 model.add(Dense(labels_count, activation='softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='RMSprop', metrics=['accuracy'])
 
 MODEL_DIR = './model3/'
 if not os.path.exists(MODEL_DIR):
     os.mkdir(MODEL_DIR)
 
-FILE_NAME = './model3/model_num-{epoch:03d}.h5'
+FILE_NAME = './model3/model_num1-{epoch:03d}.h5'
 checkpoint = ModelCheckpoint(FILE_NAME)
 callbacks_list = [checkpoint]
 
 history = model.fit(trX, trY, validation_data=(teX, teY),
-                          epochs=EPOCH, batch_size=BATCH_SIZE, shuffle = True,verbose=VERBOSE, callbacks=callbacks_list)
+                          epochs=EPOCH, batch_size=BATCH_SIZE, shuffle=True, verbose=VERBOSE, callbacks=callbacks_list)
 
 
-#model.save(FILE_NAME)
+model.save(FILE_NAME)
 emnist1_acc = model.evaluate(teX, teY)
 e1_acc = emnist1_acc[1]
 print("\nAcc: %.4f" % e1_acc)

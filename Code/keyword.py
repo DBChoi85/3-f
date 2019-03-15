@@ -7,10 +7,16 @@ extra_data = '3friend_extra_data.xlsx'
 test_dtree_excel = 'test_dtree.xlsx'
 keyword_data = 'keyword_table.xlsx'
 
-DATA = pd.read_excel(PATH + extra_data, sheet_name='전자계산서', encoding='utf-8')
+DATA = pd.read_excel(PATH + extra_data, sheet_name='전자세금계산서', encoding='utf-8')
 
-test = DATA['품명'].copy()
+test = DATA.loc[:, ['품명']].copy()
 test = test.fillna('기타')
 test = test.drop_duplicates()
-test.to_excel('keyword_2018_sheet2.xlsx')
+test = test.reset_index()
+del(test['index'])
+#test = test.str.split(' ', n=5, expand=True)
+
+test.to_excel('keyword_2018_sheet1.xlsx')
+
+
 print(test)
